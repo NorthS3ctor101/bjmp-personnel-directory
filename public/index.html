@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRMIS | BJMP Personnel Directory</title>
+  <link rel="icon" type="image/png" href="/img/prmisicon.ico" />
+  <script src="/vendor/lucide.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="loginModal">
+  <div class="modal-card">
+    <div class="modal-icon-wrap">
+      <i data-lucide="smartphone" class="icon-md"></i>
+    </div>
+    <h2 class="modal-title">Secure Authentication</h2>
+
+    <form id="loginForm" autocomplete="off" novalidate>
+      <label for="totpCode" class="field-label">
+        Enter the 6-digit code from your authenticator app
+      </label>
+      <input
+        type="text" id="totpCode"
+        placeholder="000000"
+        inputmode="numeric" maxlength="6"
+        autocomplete="one-time-code" spellcheck="false"
+        required autofocus
+      >
+      <div class="timer-row">
+        <i data-lucide="clock" class="icon-sm icon-blue pulse"></i>
+        <span>Code refreshes in <span id="totpTimer">30</span>s</span>
+      </div>
+      <div id="loginErrorMessage" role="alert" aria-live="polite"></div>
+      <button type="submit" id="loginBtn" class="btn-primary">
+        <i data-lucide="lock" class="icon-sm"></i>
+        Authenticate
+      </button>
+    </form>
+
+    <div class="security-notice">
+      <div class="security-notice-title">
+        <i data-lucide="shield-alert" class="icon-sm icon-amber"></i>
+        Security Notice
+      </div>
+      <p>Authentication codes refresh on a 30-second cycle, reinforcing secure access practices.</p>
+    </div>
+  </div>
+</div>
+
+<div id="mainApp" class="locked">
+  <header class="app-header">
+    <div class="header-brand">
+      <img src="/img/logo.png" alt="BJMP Logo" class="header-logo" />
+      <div>
+        <div class="header-title">BJMP Personnel Directory</div>
+        <div class="header-subtitle">Directorate for Personnel and Records Management</div>
+      </div>
+    </div>
+    <button id="logoutBtn" class="btn-logout">
+      <i data-lucide="log-out" class="icon-sm"></i>
+      <span>Terminate Session</span>
+    </button>
+  </header>
+
+  <div class="search-panel">
+    <form id="searchForm">
+      <div>
+        <label for="searchType" class="form-label">Search By</label>
+        <select id="searchType" class="form-control">
+          <option value="0">ECODE</option>
+          <option value="2" selected>Last Name</option>
+          <option value="3">First Name</option>
+        </select>
+      </div>
+      <div>
+        <label for="searchQuery" class="form-label">Keyword</label>
+        <input type="text" id="searchQuery" placeholder="Enter search term..."
+          autocomplete="off" spellcheck="false" class="form-control">
+      </div>
+      <div>
+        <label for="pageSize" class="form-label">Show Entries</label>
+        <select id="pageSize" class="form-control">
+          <option value="10" selected>10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+      <div>
+        <button type="submit" class="btn-search">
+          <i data-lucide="search" class="icon-sm"></i> Search
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="data-container">
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ECODE</th><th>Rank</th><th>Last Name</th><th>First Name</th>
+            <th>Middle Name</th><th>Suffix</th><th>Date of Entry</th>
+            <th>Region</th><th>Status</th><th>Separation Date</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="10" class="placeholder-cell" id="placeholderRow">
+            <i data-lucide="database" class="icon-lg icon-slate"></i>
+            <div>Awaiting validation token...</div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="mobileCardsContainer">
+      <div class="spinner-wrap" id="mobilePlaceholder">
+        <i data-lucide="database" class="icon-lg icon-slate"></i>
+        <div style="color:var(--slate-400);font-size:.8rem">Awaiting validation token...</div>
+      </div>
+    </div>
+
+    <div id="tableFooter">
+      <div class="pagination-info">
+        Showing <strong id="showingStart">0</strong> to
+        <strong id="showingEnd">0</strong> of
+        <strong id="recordCount">0</strong> records
+      </div>
+      <div class="pagination-controls">
+        <button id="prevPageBtn" class="btn-page">
+          <i data-lucide="chevron-left" class="icon-sm"></i> Prev
+        </button>
+        <span class="page-label">
+          Page <strong id="currentPageNum">1</strong> of <strong id="totalPagesNum">1</strong>
+        </span>
+        <button id="nextPageBtn" class="btn-page">
+          Next <i data-lucide="chevron-right" class="icon-sm"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-copy">&copy; 2026 DPRM Personnel Directory. All rights reserved.</div>
+    <div class="footer-dev">
+      <i data-lucide="terminal" class="icon-sm" style="color:var(--blue-600)"></i>
+      Developed by <span class="accent">DPRM ICT DevTeam</span>
+    </div>
+  </footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
