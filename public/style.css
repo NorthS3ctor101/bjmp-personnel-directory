@@ -73,7 +73,7 @@ select, input { font-family: inherit; }
 @media (min-width: 480px) { .modal-card { padding: 2rem; } }
 
 .modal-logo {
-  height: 32px; 
+  height: 28px; 
   width: auto;
   object-fit: contain;
   display: block;
@@ -81,13 +81,15 @@ select, input { font-family: inherit; }
 
 .modal-logo-wrap {
   height: 56px; 
-  padding: 0 1.5rem;
-  border-radius: var(--radius-md);
+  width: 56px;
+
+  border-radius: 50%;
+  padding: 0;
+  
   background: var(--blue-50);
   border: 1px solid var(--blue-100);
   
   display: flex;
-  width: max-content;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.25rem;
