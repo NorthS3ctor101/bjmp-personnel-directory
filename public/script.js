@@ -35,13 +35,27 @@ if (window.lucide) lucide.createIcons();
 
 (function startTotpCountdown() {
   const display = document.getElementById('totpTimer');
+  const progressFill = document.querySelector('.progress-bar-fill');
   if (!display) return;
+
   function update() {
-    const s = 30 - Math.floor((Date.now() / 1000) % 30);
-    display.textContent = s;
-    display.className   = s <= 10 ? 'urgent' : '';
+    const now = Date.now();
+    
+    const secondsLeft = 30 - Math.floor((now / 1000) % 30);
+    display.textContent = secondsLeft + 's';
+    display.className   = secondsLeft <= 10 ? 'urgent' : '';
+
+    if (progressFill) {
+      const msElapsedInCycle = (now % 30000);
+      const msLeftInCycle = 30000 - msElapsedInCycle;
+      const percentageLeft = (msLeftInCycle / 30000) * 100;
+      
+      progressFill.style.width = `${percentageLeft}%`;
+    }
   }
+
   update();
+  // Keep regular updates running every second
   setInterval(update, 1000);
 })();
 
