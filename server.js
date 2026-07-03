@@ -152,8 +152,16 @@ app.use(cors({ origin: false }));
 app.use(express.json({ limit: '10kb' }));
 
 app.use('/vendor', express.static(path.join(__dirname, 'public', 'vendor'), { maxAge: '7d' }));
+app.use('/img', express.static(path.join(__dirname, 'public', 'img')));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.get('/login.css', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.css')));
+app.get('/login.js', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.js')));
+app.get('/style.css', (req, res) => res.sendFile(path.join(__dirname, 'public', 'style.css')));
+app.get('/script.js', (req, res) => res.sendFile(path.join(__dirname, 'public', 'script.js')));
+
+app.get('/login.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
 
 function requireSession(req, res, next) {
   const token = req.headers['x-session-token'];
@@ -236,7 +244,7 @@ app.get('/api/records', requireSession, async (req, res) => {
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.redirect('/login.html');
 });
 
 app.listen(PORT, () => {
