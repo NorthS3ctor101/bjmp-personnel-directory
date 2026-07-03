@@ -6,9 +6,13 @@ let isDatabaseReady = false;
 let currentPage     = 1;
 let pageSize        = 10;
 
-let sessionToken        = null;
-let sessionExpiryTimer  = null;
-let sessionWarningTimer = null;
+// Read authorization token immediately from local storage
+let sessionToken = localStorage.getItem('x-session-token');
+
+// If there is no token at all, redirect immediately before processing layout setup
+if (!sessionToken) {
+  window.location.replace('/login.html');
+}
 
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
@@ -33,109 +37,7 @@ function formatSheetDate(dateStr) {
 
 if (window.lucide) lucide.createIcons();
 
-(function startTotpCountdown() {
-  const display = document.getElementById('totpTimer');
-  const progressFill = document.querySelector('.progress-bar-fill');
-  if (!display) return;
-
-  function update() {
-    const now = Date.now();
-    
-    const secondsLeft = 30 - Math.floor((now / 1000) % 30);
-    display.textContent = secondsLeft + 's';
-    display.className   = secondsLeft <= 10 ? 'urgent' : '';
-
-    if (progressFill) {
-      const msElapsedInCycle = (now % 30000);
-      const msLeftInCycle = 30000 - msElapsedInCycle;
-      const percentageLeft = (msLeftInCycle / 30000) * 100;
-      
-      progressFill.style.width = `${percentageLeft}%`;
-    }
-  }
-  update();
-  setInterval(update, 1000);
-})();
-
-document.getElementById('totpCode').addEventListener('input', function () {
-  this.value = this.value.replace(/\D/g, '').slice(0, 6);
-});
-
-document.getElementById('loginForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
-
-  const totpInput = document.getElementById('totpCode').value.trim();
-  const loginBtn  = document.getElementById('loginBtn');
-  const errorEl   = document.getElementById('loginErrorMessage');
-
-  if (!/^\d{6}$/.test(totpInput)) {
-    showError(errorEl, 'Please enter a valid 6-digit code.');
-    return;
-  }
-
-  errorEl.style.display = 'none';
-  loginBtn.disabled     = true;
-  loginBtn.textContent  = 'Verifying…';
-
-  const platform    = (navigator.userAgentData?.platform ?? navigator.platform ?? 'Unknown').slice(0, 50);
-  const browserHint = navigator.userAgent.split(' ').pop().slice(0, 80);
-  const machineInfo = `OS: ${platform} | UA: ${browserHint}`;
-
-  try {
-    const response = await fetch('/api/verify', {
-      method:      'POST',
-      headers:     { 'Content-Type': 'application/json' },
-      body:        JSON.stringify({ totpCode: totpInput, machineInfo }),
-      credentials: 'same-origin',
-    });
-
-    const result = await response.json();
-
-    if (response.ok && result.success && result.sessionToken) {
-      sessionToken = result.sessionToken;
-      startSessionTimeout(result.expiresIn ?? 1800);
-      unlockApp();
-      preloadData();
-    } else {
-      showError(errorEl, result.message || 'Access denied.');
-      loginBtn.disabled    = false;
-      loginBtn.innerHTML   = '<i data-lucide="lock" class="icon-sm"></i> Authenticate';
-      if (window.lucide) lucide.createIcons();
-    }
-  } catch (err) {
-    console.error('Login error:', err);
-    showError(errorEl, 'Network error. Please try again.');
-    loginBtn.disabled    = false;
-    loginBtn.innerHTML   = '<i data-lucide="lock" class="icon-sm"></i> Authenticate';
-    if (window.lucide) lucide.createIcons();
-  }
-});
-
-function showError(el, msg) {
-  el.textContent    = msg;
-  el.style.display  = 'block';
-}
-
-function unlockApp() {
-  document.getElementById('loginModal').style.display = 'none';
-  document.getElementById('mainApp').classList.remove('locked');
-  if (window.lucide) lucide.createIcons();
-}
-
-function startSessionTimeout(expiresInSeconds) {
-  clearTimeout(sessionExpiryTimer);
-  clearTimeout(sessionWarningTimer);
-
-  sessionExpiryTimer = setTimeout(() => {
-    alert('Session Expired: Your session has been automatically terminated after 30 minutes.');
-    triggerSessionLogout();
-  }, expiresInSeconds * 1000);
-}
-
 async function triggerSessionLogout() {
-  clearTimeout(sessionExpiryTimer);
-  clearTimeout(sessionWarningTimer);
-
   if (sessionToken) {
     try {
       await fetch('/api/logout', {
@@ -143,45 +45,21 @@ async function triggerSessionLogout() {
         headers:     { 'x-session-token': sessionToken },
         credentials: 'same-origin',
       });
-    } catch { /* best-effort */ }
+    } catch {}
   }
 
-  sessionToken    = null;
-  masterData      = [];
-  filteredData    = [];
-  isDatabaseReady = false;
-  currentPage     = 1;
-
-  // Reset UI
-  document.getElementById('loginModal').style.display = 'flex';
-  document.getElementById('mainApp').classList.add('locked');
-  document.getElementById('totpCode').value    = '';
-  document.getElementById('searchQuery').value = '';
-  document.getElementById('loginErrorMessage').style.display = 'none';
-  document.getElementById('tableFooter').classList.remove('visible');
-
-  const loginBtn = document.getElementById('loginBtn');
-  loginBtn.disabled   = false;
-  loginBtn.innerHTML  = '<i data-lucide="lock" class="icon-sm"></i> Authenticate';
-
-  const placeholderHtml = `
-    <div class="spinner-wrap">
-      <i data-lucide="database" class="icon-lg icon-slate"></i>
-      <div style="color:var(--slate-400);font-size:.8rem">Awaiting validation token...</div>
-    </div>`;
-
-  document.getElementById('tableBody').innerHTML =
-    `<tr><td colspan="10" class="placeholder-cell">${placeholderHtml}</td></tr>`;
-  document.getElementById('mobileCardsContainer').innerHTML = placeholderHtml;
-
-  if (window.lucide) lucide.createIcons();
-  setTimeout(() => document.getElementById('totpCode').focus(), 100);
+  localStorage.removeItem('x-session-token');
+  sessionToken = null;
+  window.location.replace('/login.html');
 }
 
 document.getElementById('logoutBtn').addEventListener('click', triggerSessionLogout);
 
 async function authFetch(url, options = {}) {
-  if (!sessionToken) throw new Error('No active session.');
+  if (!sessionToken) {
+    window.location.replace('/login.html');
+    throw new Error('No active session.');
+  }
   return fetch(url, {
     ...options,
     credentials: 'same-origin',
@@ -333,7 +211,6 @@ function displayPageData() {
       <td>${dateSep}</td>`;
     tFrag.appendChild(tr);
 
-    // Mobile card
     const card = document.createElement('div');
     card.className = 'mobile-card';
     card.innerHTML = `
@@ -362,3 +239,5 @@ function displayPageData() {
   document.getElementById('nextPageBtn').disabled       = currentPage === totalPages;
   footer.classList.add('visible');
 }
+
+preloadData();
