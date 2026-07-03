@@ -68,13 +68,26 @@ select, input { font-family: inherit; }
   width: 100%; max-width: 380px;
   padding: 1.75rem;
 }
+
+
 @media (min-width: 480px) { .modal-card { padding: 2rem; } }
 
-.modal-icon-wrap {
-  width: 48px; height: 48px; border-radius: 50%;
-  background: var(--blue-50); border: 1px solid var(--blue-100);
-  color: var(--blue-600);
-  display: flex; align-items: center; justify-content: center;
+.modal-logo {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.modal-logo-wrap {
+  height: 48px;
+  padding: 0 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--blue-50);
+  border: 1px solid var(--blue-100);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin: 0 auto 0.75rem;
 }
 
