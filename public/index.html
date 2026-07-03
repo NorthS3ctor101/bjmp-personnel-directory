@@ -26,11 +26,15 @@
     </div>
   </div>
 
-  <div style="margin-bottom: 1rem;">
-    <input type="text" id="totpCode" placeholder="000 000" maxlength="7">
-  </div>
+  <form id="loginForm">
+    <div style="margin-bottom: 1rem;">
+      <input type="text" id="totpCode" placeholder="000 000" maxlength="7">
+    </div>
+    
+    <button type="submit" class="btn-primary" id="loginBtn">Authenticate</button>
+  </form>
 
-  <button class="btn-primary" id="loginBtn">Authenticate</button>
+  <div id="loginErrorMessage" style="display: none;"></div>
 
   <div class="security-notice">
     <p><strong>Security Notice:</strong> Authentication codes refresh on a 30-second cycle, reinforcing secure access practices.</p>
