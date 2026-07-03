@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | BJMP Personnel Directory</title>
+  <link rel="icon" type="image/png" href="/img/prmisicon.ico" />
+  <script src="/vendor/lucide.min.js"></script>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+<div id="loginModal">
+  <div class="modal-card">
+    <div class="modal-logo-wrap">
+      <img src="/img/dprmlogo.png" alt="DPRM Logo" class="modal-logo" />
+    </div>
+
+    <h2 class="modal-title">BJMP Personnel Directory</h2>
+    <p class="modal-subtitle">Enter the 6-digit code from your authenticator app.</p>
+
+    <div class="timer-container">
+      <div class="timer-text">Code expires in: <span id="totpTimer">30s</span></div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: 100%;"></div>
+      </div>
+    </div>
+
+    <form id="loginForm">
+      <div style="margin-bottom: 1rem;">
+        <input type="text" id="totpCode" placeholder="000 000" maxlength="6" autocomplete="off">
+      </div>
+      <button type="submit" class="btn-primary" id="loginBtn">Authenticate</button>
+    </form>
+
+    <div id="loginErrorMessage" style="display: none;"></div>
+
+    <div class="security-notice">
+      <p><strong>Security Notice:</strong> Authentication codes refresh on a 30-second cycle, reinforcing secure access practices.</p>
+    </div>
+  </div>
+</div>
+
+<script src="login.js"></script>
+</body>
+</html>
