@@ -53,9 +53,7 @@ if (window.lucide) lucide.createIcons();
       progressFill.style.width = `${percentageLeft}%`;
     }
   }
-
   update();
-  // Keep regular updates running every second
   setInterval(update, 1000);
 })();
 
