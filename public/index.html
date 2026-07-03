@@ -12,41 +12,30 @@
 
 <div id="loginModal">
   <div class="modal-card">
-    <div class="modal-logo-wrap">
-      <img src="/img/dprmlogo.png" alt="PRMIS Logo" class="modal-logo" />
-    </div>
-    <h2 class="modal-title">Secure Authentication</h2>
+  <div class="modal-logo-wrap">
+    <img src="/img/bjmp-logo.png" alt="BJMP Seal" class="modal-logo" />
+  </div>
 
-    <form id="loginForm" autocomplete="off" novalidate>
-      <label for="totpCode" class="field-label">
-        Enter the 6-digit code from your authenticator app
-      </label>
-      <input
-        type="text" id="totpCode"
-        placeholder="000000"
-        inputmode="numeric" maxlength="6"
-        autocomplete="one-time-code" spellcheck="false"
-        required autofocus
-      >
-      <div class="timer-row">
-        <i data-lucide="clock" class="icon-sm icon-blue pulse"></i>
-        <span>Code refreshes in <span id="totpTimer">30</span>s</span>
-      </div>
-      <div id="loginErrorMessage" role="alert" aria-live="polite"></div>
-      <button type="submit" id="loginBtn" class="btn-primary">
-        <i data-lucide="lock" class="icon-sm"></i>
-        Authenticate
-      </button>
-    </form>
+  <h2 class="modal-title">BJMP Secure <br>Authentication</h2>
+  <p class="modal-subtitle">Enter the 6-digit code from your authenticator app.</p>
 
-    <div class="security-notice">
-      <div class="security-notice-title">
-        <i data-lucide="shield-alert" class="icon-sm icon-amber"></i>
-        Security Notice
-      </div>
-      <p>Authentication codes refresh on a 30-second cycle, reinforcing secure access practices.</p>
+  <div class="timer-container">
+    <div class="timer-text">Code expires in: <span id="totpTimer">26s</span></div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" style="width: 86%;"></div>
     </div>
   </div>
+
+  <div style="margin-bottom: 1rem;">
+    <input type="text" id="totpCode" placeholder="000 000" maxlength="7">
+  </div>
+
+  <button class="btn-primary" id="btnAuthenticate">Authenticate</button>
+
+  <div class="security-notice">
+    <p><strong>Security Notice:</strong> Authentication codes refresh on a 30-second cycle, reinforcing secure access practices.</p>
+  </div>
+</div>
 </div>
 
 <div id="mainApp" class="locked">
